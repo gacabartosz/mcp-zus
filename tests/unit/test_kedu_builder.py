@@ -51,7 +51,7 @@ def test_build_zua_contains_pesel():
     )
     xml = build_kedu([zua])
     assert VALID_PESEL.encode() in xml
-    assert b"ZUA" in xml
+    assert b"ZUSZUA" in xml  # XSD requires ZUS-prefixed element name
 
 
 def test_build_zwua_has_kod_przyczyny():
@@ -63,7 +63,7 @@ def test_build_zwua_has_kod_przyczyny():
         kod_przyczyny_wyrejestrowania="100",
     )
     xml = build_kedu([zwua])
-    assert b"ZWUA" in xml
+    assert b"ZUSZWUA" in xml
     assert b"100" in xml
 
 
@@ -78,7 +78,7 @@ def test_build_zcna_has_family_member():
         data_powstania_uprawnienia=date(2020, 6, 14),
     )
     xml = build_kedu([zcna])
-    assert b"ZCNA" in xml
+    assert b"ZUSZCNA" in xml
     assert b"Kowalska" in xml
 
 
@@ -93,8 +93,22 @@ def test_build_kedu_multiple_documents():
         ),
     ]
     xml = build_kedu(docs)
-    assert b"<DRA" in xml or b":DRA" in xml or b"DRA>" in xml
-    assert b"ZUA" in xml
+    assert b"ZUSDRA" in xml
+    assert b"ZUSZUA" in xml
+
+
+def test_envelope_has_wersja_schematu_attribute():
+    """KEDU root must have wersja_schematu='1' attribute per XSD."""
+    dra = DraInput(payer=_payer(), period=date(2026, 5, 1))
+    xml = build_kedu([dra])
+    assert b'wersja_schematu="1"' in xml
+
+
+def test_envelope_uses_dot_in_naglowek_name():
+    """Per XSD, header element is `naglowek.KEDU` not `naglowek_KEDU`."""
+    dra = DraInput(payer=_payer(), period=date(2026, 5, 1))
+    xml = build_kedu([dra])
+    assert b"naglowek.KEDU" in xml
 
 
 def test_kedu_digest_is_hex_string():
@@ -124,7 +138,7 @@ def test_jdg_monthly_builds_dra():
 
     inp = JdgMonthlyInput(payer=_payer(), period=date(2026, 5, 1), basis_kind="standard")
     xml = build_jdg_monthly(inp)
-    assert b"DRA" in xml
+    assert b"ZUSDRA" in xml
     assert b"liczba_ubezpieczonych" in xml
 
 

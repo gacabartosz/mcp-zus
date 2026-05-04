@@ -22,7 +22,7 @@ def test_parse_extracts_naglowek_and_documents():
     assert "naglowek" in parsed
     assert "documents" in parsed
     assert len(parsed["documents"]) == 1
-    assert parsed["documents"][0]["type"] == "DRA"
+    assert parsed["documents"][0]["type"] == "ZUSDRA"
 
 
 def test_parse_multiple_documents():
@@ -40,7 +40,7 @@ def test_parse_multiple_documents():
     xml = build_kedu(docs)
     parsed = parse_kedu(xml)
     types = {d["type"] for d in parsed["documents"]}
-    assert types == {"DRA", "ZUA"}
+    assert types == {"ZUSDRA", "ZUSZUA"}
 
 
 def test_parse_rejects_non_kedu():

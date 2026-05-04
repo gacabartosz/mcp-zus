@@ -54,17 +54,33 @@ def parse_kedu(xml: bytes | str) -> dict[str, Any]:
     if etree.QName(root).localname != "KEDU":
         raise ValueError(f"Root element must be KEDU, got {etree.QName(root).localname}")
 
-    naglowek = root.find("k:naglowek_KEDU", _NS)
-    documents_el = root.find("k:dokumenty", _NS)
+    # XSD uses dot in element name: `naglowek.KEDU` — use full {ns}name form
+    # because lxml's find() with prefixed paths doesn't accept dots in tag.
+    naglowek = root.find(f"{{{KEDU_NS}}}naglowek.KEDU")
+    if naglowek is None:
+        naglowek = root.find(f"{{{KEDU_NS}}}naglowek_KEDU")  # legacy
 
+    skip_tags = {
+        f"{{{KEDU_NS}}}naglowek.KEDU",
+        f"{{{KEDU_NS}}}naglowek_KEDU",
+        f"{{{KEDU_NS}}}cechy.KEDU",
+        f"{{{KEDU_NS}}}stopka.KEDU",
+        f"{{{KEDU_NS}}}dokumenty",
+        "{http://www.w3.org/2000/09/xmldsig#}Signature",
+    }
     documents: list[dict[str, Any]] = []
-    if documents_el is not None:
-        for doc in documents_el:
+    for child in root:
+        if not isinstance(child.tag, str) or child.tag in skip_tags:
+            continue
+        documents.append(
+            {"type": etree.QName(child).localname, "data": _xml_to_dict(child)}
+        )
+
+    legacy_wrapper = root.find(f"{{{KEDU_NS}}}dokumenty")
+    if legacy_wrapper is not None:
+        for doc in legacy_wrapper:
             documents.append(
-                {
-                    "type": etree.QName(doc).localname,
-                    "data": _xml_to_dict(doc),
-                }
+                {"type": etree.QName(doc).localname, "data": _xml_to_dict(doc)}
             )
 
     return {

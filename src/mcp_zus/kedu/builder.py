@@ -57,8 +57,8 @@ def _build_naglowek(
     program: Program,
     sender_idp: str | None = None,
 ) -> None:
-    """Build <naglowek_KEDU>."""
-    n = _e(root, "naglowek_KEDU")
+    """Build <naglowek.KEDU> (note: dot, not underscore — exact XSD requirement)."""
+    n = _e(root, "naglowek.KEDU")
     p = _e(n, "program")
     _e(p, "producent", program.producent)
     _e(p, "symbol", program.symbol)
@@ -94,8 +94,8 @@ def _build_dane_ubezpieczonego(parent: etree._Element, ins: Insured) -> None:
 
 
 def _build_zua(parent: etree._Element, doc: ZuaInput) -> None:
-    """Zgłoszenie do ubezpieczeń (ZUA)."""
-    zua = _e(parent, "ZUA")
+    """Zgłoszenie do ubezpieczeń (ZUA → element ZUSZUA in XSD)."""
+    zua = _e(parent, "ZUSZUA")
     _build_dane_platnika(zua, doc.payer)
     _build_dane_ubezpieczonego(zua, doc.insured)
     tu = _e(zua, "tytul_ubezpieczenia")
@@ -111,8 +111,8 @@ def _build_zua(parent: etree._Element, doc: ZuaInput) -> None:
 
 
 def _build_zwua(parent: etree._Element, doc: ZwuaInput) -> None:
-    """Wyrejestrowanie z ubezpieczeń (ZWUA)."""
-    zwua = _e(parent, "ZWUA")
+    """Wyrejestrowanie z ubezpieczeń (ZWUA → element ZUSZWUA in XSD)."""
+    zwua = _e(parent, "ZUSZWUA")
     _build_dane_platnika(zwua, doc.payer)
     _build_dane_ubezpieczonego(zwua, doc.insured)
     wy = _e(zwua, "wyrejestrowanie")
@@ -122,8 +122,8 @@ def _build_zwua(parent: etree._Element, doc: ZwuaInput) -> None:
 
 
 def _build_ziua(parent: etree._Element, doc: ZiuaInput) -> None:
-    """Zmiana danych identyfikacyjnych ubezpieczonego (ZIUA)."""
-    ziua = _e(parent, "ZIUA")
+    """Zmiana danych identyfikacyjnych ubezpieczonego (ZIUA → element ZUSZIUA in XSD)."""
+    ziua = _e(parent, "ZUSZIUA")
     _build_dane_platnika(ziua, doc.payer)
     o = _e(ziua, "stare_dane_ubezpieczonego")
     _build_dane_ubezpieczonego(o, doc.old)
@@ -132,8 +132,8 @@ def _build_ziua(parent: etree._Element, doc: ZiuaInput) -> None:
 
 
 def _build_zcna(parent: etree._Element, doc: ZcnaInput) -> None:
-    """Zgłoszenie członka rodziny (ZCNA)."""
-    zcna = _e(parent, "ZCNA")
+    """Zgłoszenie członka rodziny (ZCNA → element ZUSZCNA in XSD)."""
+    zcna = _e(parent, "ZUSZCNA")
     _build_dane_platnika(zcna, doc.payer)
     u = _e(zcna, "ubezpieczony")
     _build_dane_ubezpieczonego(u, doc.insured)
@@ -144,8 +144,13 @@ def _build_zcna(parent: etree._Element, doc: ZcnaInput) -> None:
 
 
 def _build_dra(parent: etree._Element, doc: DraInput) -> None:
-    """Deklaracja rozliczeniowa (DRA) — header-level summary."""
-    dra = _e(parent, "DRA")
+    """Deklaracja rozliczeniowa (DRA → element ZUSDRA in XSD).
+
+    NOTE: Inner DRA section structure (sections I-XIII with positional <p1>...<pN>
+    fields) is iterative work — see EWD spec Załącznik 1. v0.1.0 produces an
+    envelope-valid XML; full DRA section mapping is tracked for v0.2.0.
+    """
+    dra = _e(parent, "ZUSDRA")
     _build_dane_platnika(dra, doc.payer)
 
     ident = _e(dra, "identyfikator_deklaracji")
@@ -198,14 +203,15 @@ def build_kedu(
     program = program or Program()
 
     root = etree.Element(_qn("KEDU"), nsmap=NSMAP)
+    root.set("wersja_schematu", "1")
     _build_naglowek(root, program, sender_idp)
 
-    docs_el = etree.SubElement(root, _qn("dokumenty"))
+    # Documents go DIRECTLY under <KEDU> (no <dokumenty> wrapper) per XSD t_KEDU.
     for doc in documents:
         builder = _BUILDERS.get(type(doc))
         if builder is None:
             raise TypeError(f"No builder registered for {type(doc).__name__}")
-        builder(docs_el, doc)
+        builder(root, doc)
 
     return etree.tostring(
         root,

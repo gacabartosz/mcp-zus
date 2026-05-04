@@ -19,14 +19,18 @@
 
 ## Status modułów
 
-| Moduł | Status | Czego wymaga |
-|-------|--------|--------------|
-| `kedu` (XML 5.6) | ✅ Faza 1 | nic, offline |
-| `pue` (browser companion) | 🟡 Faza 1.5 — alpha | Chrome `--remote-debugging-port=9222` + ręczne login do PUE |
-| `okwud` (instytucje) | 🟡 Faza 2 | cert kwalifikowany + uprawnienia uprawnionej instytucji |
-| `crypto` (BYO key) | 🟡 Faza 3 | klucz po stronie usera |
-| `ewd` (płatnik) | 🟡 Faza 4 — szkielet | akredytacja u ZUS dla produkcji |
-| `epuap` + `employee.*` | 🟡 Faza 5 | cert MAC dla ePUAP |
+| Moduł | Status | Co działa 100% | Czego wymaga |
+|-------|--------|----------------|--------------|
+| `kedu` envelope | ✅ | XSD-valid envelope: `<KEDU wersja_schematu="1">` + `<naglowek.KEDU>` z `program`/`ID_KEDU`/`data_utworzenia_KEDU`. Walidator (lxml + XSD), parser, SHA-256 digest. | offline |
+| `kedu` inner sections | 🟡 WIP | Generuje `ZUSDRA`/`ZUSZUA`/`ZUSZWUA`/`ZUSZIUA`/`ZUSZCNA` z payerem i podstawowymi danymi. **Sekcje I-XIV z polami pozycyjnymi `<p1>...<pN>` zgodnie z formularzem Płatnika to iterative roadmap (v0.2).** | offline |
+| `okwud` builder + importers | ✅ | Pełny XML wg `crd.gov.pl/wzor/2020/12/29/10229`, 60+ kodów instytucji, 5 formatów importu (XLSX/XLS/CSV/ODS/XML) | offline |
+| `okwud` SOAP client | 🟡 scaffold | WSDL endpoint stały, struktura sesji `pobierzOswiadczenie` znana | cert kwalifikowany + uprawnienia uprawnionej instytucji |
+| `crypto` BYO key | ✅ | `prepare_signing_payload` (C14N + SHA-256 digest), `attach_signature` (osadza `<ds:Signature>`); server NIGDY nie czyta klucza | klucz po stronie usera |
+| `pue` browser companion | 🟡 alpha | Playwright + CDP attach do running Chrome'a, page-object pattern, MCP nigdy nie obsługuje credentials | Chrome `--remote-debugging-port=9222` + ręczne login + kalibracja selektorów na żywej sesji |
+| `ewd` (płatnik SOAP) | 🟡 scaffold | Interfejs i sygnatury gotowe | akredytacja u ZUS dla produkcji |
+| `epuap` (WS-Skrytka) | 🟡 scaffold | Interfejs gotowy | cert MAC dla SOD |
+| `employee` orchestrator | ✅ | High-level `register/deregister/update/add_family_member` opakowuje KEDU builder | offline |
+| MCP server (stdio) | ✅ | 30 tooli zarejestrowanych przez FastMCP, smoke-tested po stdio JSON-RPC | offline |
 
 ## Quickstart
 
@@ -94,9 +98,16 @@ Patrz [`docs/tools.md`](docs/tools.md) dla pełnej dokumentacji 40+ tooli.
 - Regulamin PUE ZUS — moduł `pue` jest narzędziem ergonomicznym dla pojedynczego usera, **nie batch-processorem**. Używaj zgodnie z regulaminem.
 - ZUS oficjalnie nie publikuje SDK; produkcyjne EWD/OK-WUD wymaga indywidualnej akredytacji u ZUS.
 
-## Status: Alpha
+## Status: Alpha v0.1.0
 
 Projekt jest w fazie alpha. **Nie używaj produkcyjnie bez własnych testów na własnych danych.** Jeśli znajdziesz błąd — issue. Jeśli chcesz pomóc — PR welcome.
+
+### Co wymaga jeszcze pracy w v0.2
+
+1. **KEDU inner section mapping** — dla pełnej XSD-walidacji DRA/ZUA/RCA każda sekcja (I, II, ..., XIV) musi mapować pola pozycyjne `<p1>...<pN>` dokładnie wg `Załącznik 1 — Zakres informacyjny dokumentów ubezpieczeniowych ZUS` (BIP ZUS). Aktualne builders generują strukturę uproszczoną — envelope jest XSD-valid, inner sekcje są nazwane semantycznie ale nie pozycyjnie.
+2. **PUE selector calibration** — selektory w `src/mcp_zus/pue/selectors.py` to educated guesses; finalna kalibracja po pierwszym `pue.attach()` na zalogowanej sesji (DevTools → Copy Selector → wklej do `selectors.py`).
+3. **EWD/OK-WUD live calls** — wymaga akredytacji u ZUS; interfejsy i WSDL gotowe.
+4. **JDG monthly DRA: aktualne podstawy z GUS** — obecnie zaszyte w `kedu/jdg.py`; w v0.2 czytane z aktualnego komunikatu Prezesa GUS.
 
 ## License
 

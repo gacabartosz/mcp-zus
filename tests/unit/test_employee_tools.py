@@ -27,7 +27,7 @@ def test_register_employee_returns_zua_xml():
     )
     response = employee_tools.tool_register_employee(inp)
     assert response.document_kind == "ZUA"
-    assert "<ZUA" in response.xml or ":ZUA" in response.xml or "ZUA>" in response.xml
+    assert "ZUSZUA" in response.xml
 
 
 def test_deregister_employee_returns_zwua_xml():
