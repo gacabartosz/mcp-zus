@@ -57,3 +57,9 @@ audit.jsonl
 
 # Claude
 .claude/
+
+# Ralph audit runtime artifacts — keep RALPH_AUDIT_REPORT.md, drop the rest
+.ralph-runs/
+.ralph-worktrees/
+.ralph-audit-archive/
+.ralph-audit-archive-v4-evidence/
