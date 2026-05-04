@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (x64) (http://www.altova.com) by Tomasz Rachwalski (Asseco Poland S.A.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Import" type="ImportTyp">
+		<xs:annotation>
+			<xs:documentation>Lista danych podmiotów do zaimportowania w kreatorze rejestracji wniosków OK-WUD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ImportTyp">
+		<xs:sequence maxOccurs="50">
+			<xs:element name="DanePodmiotu" type="DaneIdentyfikacyjneAdresowePodmiotuTyp"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DaneIdentyfikacyjneAdresowePodmiotuTyp">
+		<xs:sequence>
+			<xs:element name="LP" type="xs:string" minOccurs="0"/>
+			<xs:element name="SYGNATURA_SPRAWY" type="OdwolanieDoNumeruSprawyTyp" minOccurs="0"/>
+			<xs:element name="NAZWA_SKROCONA" type="NazwaSkroconaTyp" minOccurs="0"/>
+			<xs:element name="NAZWA_PELNA" type="NazwaInstytucjiTyp" minOccurs="0"/>
+			<xs:element name="IMIE" type="ImieTyp" minOccurs="0"/>
+			<xs:element name="NAZWISKO" type="NazwiskoTyp" minOccurs="0"/>
+			<xs:element name="NIP" type="NIPTyp" minOccurs="0"/>
+			<xs:element name="REGON" type="REGONTyp" minOccurs="0"/>
+			<xs:element name="PESEL" type="PESELTyp" minOccurs="0"/>
+			<xs:element name="TYP_DOKUMENTU" type="xs:string" minOccurs="0"/>
+			<xs:element name="NUMER_DOKUMENTU" type="NrDokumentuTozsamosciTyp" minOccurs="0"/>
+			<xs:element name="DATA_URODZENIA" type="xs:date" minOccurs="0"/>
+			<xs:element name="KOD_POCZTOWY" type="KodPocztowyTyp" minOccurs="0"/>
+			<xs:element name="ZAGRANICZNY_KOD_POCZTOWY" type="ZagranicznyKodPocztowyTyp" minOccurs="0"/>
+			<xs:element name="MIEJSCOWOSC" type="MiejscowoscTyp" minOccurs="0"/>
+			<xs:element name="ULICA" type="UlicaTyp" minOccurs="0"/>
+			<xs:element name="NR_DOMU" type="BudynekTyp" minOccurs="0"/>
+			<xs:element name="NR_LOKALU" type="LokalTyp" minOccurs="0"/>
+			<xs:element name="PANSTWO" type="NazwaPanstwaTyp" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="NazwaSkroconaTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OdwolanieDoNumeruSprawyTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ZagranicznyKodPocztowyTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NazwaPanstwaTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="22"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PESELTyp">
+		<xs:annotation>
+			<xs:documentation>Numer PESEL</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="|\d{11}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NIPTyp">
+		<xs:annotation>
+			<xs:documentation>Numer NIP</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="|\d{10}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="REGONTyp">
+		<xs:annotation>
+			<xs:documentation>Numer REGON</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{14}|\d{9}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NrDokumentuTozsamosciTyp">
+		<xs:annotation>
+			<xs:documentation>Nr dokumentu tożsamości</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NazwaInstytucjiTyp">
+		<xs:annotation>
+			<xs:documentation>Nazwa instytucji</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ImieTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="22"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NazwiskoTyp">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="31"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MiejscowoscTyp">
+		<xs:annotation>
+			<xs:documentation>Miejscowość</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="26"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UlicaTyp">
+		<xs:annotation>
+			<xs:documentation>Ulica</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="65"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BudynekTyp">
+		<xs:annotation>
+			<xs:documentation>Nr budynku</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+			<xs:pattern value="\S{0,4}|\S{0,4}/\S{0,4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LokalTyp">
+		<xs:annotation>
+			<xs:documentation>Nr lokalu</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="KodPocztowyTyp">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="5"/>
+			<xs:maxLength value="6"/>
+			<xs:pattern value="\d{2}\-\d{3}|\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

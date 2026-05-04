@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Import>
+	<DanePodmiotu>
+		<LP>1</LP>
+		<SYGNATURA_SPRAWY/>
+		<NAZWA_SKROCONA/>
+		<NAZWA_PELNA/>
+		<IMIE/>
+		<NAZWISKO/>
+		<NIP/>
+		<REGON/>
+		<PESEL/>
+		<TYP_DOKUMENTU/>
+		<NUMER_DOKUMENTU/>
+		<DATA_URODZENIA/>
+		<KOD_POCZTOWY/>
+		<ZAGRANICZNY_KOD_POCZTOWY/>
+		<MIEJSCOWOSC/>
+		<ULICA/>
+		<NR_DOMU/>
+		<NR_LOKALU/>
+		<PANSTWO/>
+	</DanePodmiotu>
+</Import>
