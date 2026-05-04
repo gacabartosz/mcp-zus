@@ -685,7 +685,7 @@ ePUAP:
 
 ## How this report was generated
 
-1. The Ralph harness ran `claude -p --output-format json` in a loop inside
+1. The mcp-ralph-audit harness ran `claude -p --output-format json` in a loop inside
    `/Users/gaca/projects/personal/mcp-zus/.ralph-worktrees/ralph_audit-2026-05-04` (a git worktree branched from main).
 2. Each iteration: read PROMPT.md + fix_plan.md, did ONE thing, committed.
 3. Run terminated on: `EXIT_SIGNAL: true`, iteration cap, cost cap, or
